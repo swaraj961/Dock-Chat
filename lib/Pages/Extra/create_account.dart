@@ -7,7 +7,7 @@ import 'package:dockchat/Pages/LoginPage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:shimmer/shimmer.dart';
-import 'HomePage.dart';
+import 'package:dockchat/Pages/HomePage.dart';
 
 class CreateAccount extends StatefulWidget {
   @override

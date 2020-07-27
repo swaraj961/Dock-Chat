@@ -22,8 +22,7 @@ class LoginScreenState extends State<LoginScreen> {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   // SharedPreferences preferences;
- 
-  
+
   bool isLoggedIn = false;
   bool isLoading = false;
   FirebaseUser currentUser;
@@ -32,7 +31,7 @@ class LoginScreenState extends State<LoginScreen> {
     setState(() {
       isLoading = true;
     });
- var preferences = await SharedPreferences.getInstance();
+    var preferences = await SharedPreferences.getInstance();
     GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     GoogleSignInAuthentication googleAuthentication =
         await googleUser.authentication;
@@ -84,21 +83,24 @@ class LoginScreenState extends State<LoginScreen> {
             'photoUrl', documentSnapshot[0]['photoUrl']);
         await preferences.setString('aboutMe', documentSnapshot[0]['aboutMe']);
       }
-      Fluttertoast.showToast(msg: 'Welcome, SignIn Success');
+      Fluttertoast.showToast(msg: 'Welcome !, SignIn Success',
+      backgroundColor: Theme.of(context).primaryColor);
       setState(() {
         isLoading = false;
-         Navigator.push(
+        Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => HomeScreen(
-                    currentUserID: myFirebaseUser.uid,
-                  ),),);
+            builder: (context) => HomeScreen(
+              currentUserID: myFirebaseUser.uid,
+            ),
+          ),
+        );
       });
-     
     }
     //    SignIn Failed
     else {
-      Fluttertoast.showToast(msg: 'Try Again, SignIn Failed');
+      Fluttertoast.showToast(msg: 'Try Again !, SignIn Failed',
+         backgroundColor: Theme.of(context).primaryColor);
       setState(() {
         isLoading = false;
       });
@@ -107,114 +109,109 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-     Scaffold(
-        backgroundColor: Color(0xff251F34),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          //Theme.of(context).scaffoldBackgroundColor,
-          title: Text(
-            'DockChat',
-            style: TextStyle(
-              fontSize: 25,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+    return Scaffold(
+      backgroundColor: Color(0xff251F34),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        //Theme.of(context).scaffoldBackgroundColor,
+        title: Text(
+          'DockChat',
+          style: TextStyle(
+            fontSize: 25,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
-          centerTitle: true,
         ),
-        resizeToAvoidBottomPadding: true,
-        body: Stack(
-          children: <Widget>[
-            
-             Column(
-          children: <Widget>[
-            
-            SizedBox(
-              height:60,
-            ),
-            Center(
-              child: Hero(
-                tag: "login",
-                child: SizedBox(
-                  width: 250,
-                  height: 250,
-                  child: Image.asset('images/welcome.png'),
+        centerTitle: true,
+      ),
+      resizeToAvoidBottomPadding: true,
+      body: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              SizedBox(
+                height: 60,
+              ),
+              Center(
+                child: Hero(
+                  tag: "login",
+                  child: SizedBox(
+                    width: 250,
+                    height: 250,
+                    child: Image.asset('images/welcome.png'),
+                  ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
-              child: Shimmer.fromColors(
-                baseColor: Colors.white,
-                highlightColor: Color(0xfff3B324E),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                child: Shimmer.fromColors(
+                  baseColor: Colors.white,
+                  highlightColor: Color(0xfff3B324E),
+                  child: Text(
+                    'Login',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 30),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Text(
-                  'Login',
+                  'Please sign in to continue.',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 30),
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w400,
+                      fontSize: 13),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                'Please sign in to continue.',
-                style: TextStyle(
-                    color: Colors.grey[600],
-                    fontWeight: FontWeight.w400,
-                    fontSize: 13),
+              SizedBox(
+                height: 10,
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: controlSignIn,
-              child: Container(
+              GestureDetector(
+                onTap: controlSignIn,
+                child: Container(
                   width: MediaQuery.of(context).size.width,
                   height: 65,
                   decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(
-                              'images/google_signin_button.png')))),
-            ),
-            Padding(
-              padding: EdgeInsets.all(2),
-              child: isLoading ? circularProgress() : Container(),
-            ),
-            
-    //         SizedBox(
-    //   height:60,
-    // ),
-    // Text(
-    //   'Version 1.0',
-    //   style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
-    //   textAlign: TextAlign.center,
-    // ),
-    // Text(
-    //   'Developed by © Swaraj',
-    //   style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
-    //   textAlign: TextAlign.center,
-    // ),
-    
-          ],
-        ),
-        Positioned(
+                    image: DecorationImage(
+                      image: AssetImage('images/google_signin_button.png'),
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(2),
+                child: isLoading ? circularProgress() : Container(),
+              ),
+
+              //         SizedBox(
+              //   height:60,
+              // ),
+              // Text(
+              //   'Version 1.0',
+              //   style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
+              //   textAlign: TextAlign.center,
+              // ),
+              // Text(
+              //   'Developed by © Swaraj',
+              //   style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
+              //   textAlign: TextAlign.center,
+              // ),
+            ],
+          ),
+          Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             height: 60,
-            child:DevloperInfo(),)
-      
-          ],
-          
-        ),
-     );
-        
-    
+            child: DevloperInfo(),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -224,16 +221,16 @@ class DevloperInfo extends StatelessWidget {
     return Container(
       child: Column(
         children: <Widget>[
-            Text(
-      'Version 1.0',
-      style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
-      textAlign: TextAlign.center,
-    ),
-    Text(
-      'Developed by © Swaraj',
-      style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
-      textAlign: TextAlign.center,
-    ),
+          Text(
+            'Version 1.0',
+            style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            'Developed by © Swaraj',
+            style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
