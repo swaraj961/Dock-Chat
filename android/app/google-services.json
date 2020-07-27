@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "286694775029",
+    "firebase_url": "https://dock-chat.firebaseio.com",
+    "project_id": "dock-chat",
+    "storage_bucket": "dock-chat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:286694775029:android:e41c5b2a658e84cf26cdbc",
+        "android_client_info": {
+          "package_name": "com.example.dockchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "286694775029-47kn6720cvl2quhahjbo133k9qkefl6b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dockchat",
+            "certificate_hash": "209f7c9006fbae99763cf914ddbf656d9a6b506b"
+          }
+        },
+        {
+          "client_id": "286694775029-veb4ghobe8ddf4799ep7o1lda815k2ov.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlwngkGmhPmvYG9rfNyNjuURLECHC6x-E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "286694775029-veb4ghobe8ddf4799ep7o1lda815k2ov.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
