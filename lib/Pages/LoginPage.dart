@@ -77,13 +77,11 @@ class LoginScreenState extends State<LoginScreen> {
         //        Writing data to Local
         currentUser = myFirebaseUser;
         await preferences.setString('id', documentSnapshot[0]['id']);
-        await preferences.setString(
-            'nickname', documentSnapshot[0]['nickname']);
-        await preferences.setString(
-            'photoUrl', documentSnapshot[0]['photoUrl']);
+        await preferences.setString('nickname', documentSnapshot[0]['nickname']);
+        await preferences.setString( 'photoUrl', documentSnapshot[0]['photoUrl']);
         await preferences.setString('aboutMe', documentSnapshot[0]['aboutMe']);
       }
-      Fluttertoast.showToast(msg: 'Welcome !, SignIn Success',
+      Fluttertoast.showToast(msg: 'Welcome, SignIn Success',
       backgroundColor: Theme.of(context).primaryColor);
       setState(() {
         isLoading = false;

@@ -94,7 +94,7 @@ class HomeScreenState extends State<HomeScreen> {
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => CreateAccount(),
+                builder: (context) => SettingScreen(),
               ),
             ),
           ),
