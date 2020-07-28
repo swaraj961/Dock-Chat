@@ -27,10 +27,28 @@ class _SettingScreenState extends State<SettingScreen> {
   TextEditingController aboutMetextEditingController;
   File imagefileAvator;
   bool isLoading = false;
+  final FocusNode nickNameFocusNode = FocusNode();
+  final FocusNode aboutMeFocusNode = FocusNode();
   @override
   void initState() {
     readDataFromLocal();
     super.initState();
+  }
+ GoogleSignIn _googleSignIn = GoogleSignIn();
+  
+
+  Future<Null> logoutUser() async {
+    await FirebaseAuth.instance.signOut();
+    await _googleSignIn.disconnect();
+    await _googleSignIn.signOut();
+
+setState(() {
+  isLoading = false;
+});
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => MyApp()),
+        (Route<dynamic> route) => false);
+
   }
 
   void readDataFromLocal() async {
@@ -45,105 +63,237 @@ class _SettingScreenState extends State<SettingScreen> {
     setState(() {});
   }
 
-Future getImage() async{
-var pickedfile =  await ImagePicker().getImage(source: ImageSource.gallery);
-if(pickedfile!=null){
-  setState(() {
-  imagefileAvator = File(pickedfile.path);
-  isLoading = true;
-});
-}
-}
+  Future getImage() async {
+    var pickedfile = await ImagePicker().getImage(source: ImageSource.gallery);
+    if (pickedfile != null) {
+      setState(() {
+        imagefileAvator = File(pickedfile.path);
+        isLoading = true;
+      });
+    }
+  }
 
-void uploadImageToFirebaseStorage(){
-
-}
+  void uploadImageToFirebaseStorage() {}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xff251F34),
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         iconTheme: IconThemeData(
           color: Colors.white,
-          
         ),
-        title: Text('Account Settings',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+        title: Text(
+          'Account Settings',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
-        
       ),
-      body: 
-        SingleChildScrollView(
-          child: Column(
-            children: <Widget>[
-              // Profile Image
-              Container(
-                child: Center(
-                  child: Stack(
-                    children: <Widget>[
-                      (imagefileAvator == null)
-                          ? (photoUrl != "")
-                              ? Material(
-                                  // if photoUrl is not null means pic exists : display the  image file
-                                  child: CachedNetworkImage(
-                                      placeholder: (context, url) => Container(
-                                            width: 200,
-                                            height: 200,
-                                            padding: EdgeInsets.all(20),
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2.0,
-                                              valueColor: AlwaysStoppedAnimation(
-                                                  Theme.of(context).primaryColor),
-                                            ),
-                                          ),
-                                      imageUrl: photoUrl,
-                                      width: 200,
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            SizedBox(
+              height: 15,
+            ),
+            // Profile Image
+            Container(
+              child: Center(
+                child: Stack(
+                  children: <Widget>[
+                    (imagefileAvator == null)
+                        ? (photoUrl != "")
+                            ? Material(
+                                // if photoUrl is not null means pic exists : display the  image file
+                                child: CachedNetworkImage(
+                                  placeholder: (context, url) => Container(
+                                    width: 200,
+                                    height: 200,
+                                    padding: EdgeInsets.all(20),
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.0,
+                                      valueColor: AlwaysStoppedAnimation(
+                                          Theme.of(context).primaryColor),
+                                    ),
+                                  ),
+                                  imageUrl: photoUrl,
+                                  width: 200,
                                   height: 200,
                                   fit: BoxFit.cover,
-                                      ),
-                                      borderRadius: BorderRadius.circular(125),
-                                      clipBehavior: Clip.hardEdge,
-                                )
-                              : Icon(
-                                  Icons.account_circle,
-                                  size: 90,
-                                  color: Colors.grey,
-                                )
-                          : Material(
-                              // displaying the updated new avatar
-                              child: Image.file(imagefileAvator,
-                               width: 200,
-                                  height: 200,
-                                  fit: BoxFit.cover,),
-                                   borderRadius: BorderRadius.circular(125),
-                                  clipBehavior: Clip.hardEdge,
-                              
-                              ),
-                      IconButton(
-                        icon: Icon(Icons.camera_alt, size:100,color: Colors.white54.withOpacity(0.3),),
-                        onPressed: getImage,
-                        padding: EdgeInsets.all(0.0),
-                        splashColor: Colors.transparent,
-                        highlightColor: Colors.grey,
-                        iconSize: 200,
-
+                                ),
+                                borderRadius: BorderRadius.circular(125),
+                                clipBehavior: Clip.hardEdge,
+                              )
+                            : Icon(
+                                Icons.account_circle,
+                                size: 90,
+                                color: Colors.grey,
+                              )
+                        : Material(
+                            // displaying the updated new avatar
+                            child: Image.file(
+                              imagefileAvator,
+                              width: 200,
+                              height: 200,
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(125),
+                            clipBehavior: Clip.hardEdge,
+                          ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.camera_alt,
+                        size: 100,
+                        color: Colors.white54.withOpacity(0.3),
                       ),
-                    ],
+                      onPressed: getImage,
+                      padding: EdgeInsets.all(0.0),
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.grey,
+                      iconSize: 200,
+                    ),
+                  ],
+                ),
+              ),
+              width: double.infinity,
+              margin: EdgeInsets.all(20),
+            ),
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: isLoading ? circularProgress() : Container(),
+                ),
+
+                // !Update UI
+
+                Container(
+                  margin: EdgeInsets.only(left: 10, bottom: 12, top: 10),
+                  child: Text(
+                    'Profile Name',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-                width: double.infinity,
-                margin: EdgeInsets.all(20),
-              ),
-            ],
-          ),
-        )
-    
+                // usernameInfo
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColor,
+                      borderRadius: BorderRadius.circular(30)),
+                  child: TextFormField(
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                    controller: nickNametextEditingController,
+                    decoration: InputDecoration(
+                      focusedBorder: InputBorder.none,
+                      hintText: "E.g Swaraj",
+                      contentPadding: EdgeInsets.all(5),
+                      hintStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onChanged: (value) {
+                      nickname = value;
+                    },
+                    focusNode: nickNameFocusNode,
+                  ),
+                  margin: EdgeInsets.only(left: 30, right: 30),
+                ),
+
+                // UserAboutME Feild
+
+                Container(
+                  margin: EdgeInsets.only(left: 10, bottom: 12, top: 30),
+                  child: Text(
+                    'About ME',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                // UserBio
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: TextFormField(
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                    controller: aboutMetextEditingController,
+                    decoration: InputDecoration(
+                      focusedBorder: InputBorder.none,
+                      hintText: "E.g Hey there ! I am Using DockChat",
+                      contentPadding: EdgeInsets.all(5),
+                      hintStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onChanged: (value) {
+                      aboutMe = value;
+                    },
+                    focusNode: aboutMeFocusNode,
+                  ),
+                  margin: EdgeInsets.only(left: 30, right: 30),
+                ),
+
+                // !Update Button
+                Container(
+                  width: 200,
+                  height: 70,
+                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  margin: EdgeInsets.only(top: 50, bottom: 2),
+                  child: FlatButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0)),
+                    child: Text(
+                      'Update',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    color: Colors.green,
+                    splashColor: Colors.transparent,
+                    textColor: Colors.white,
+                    onPressed: () {},
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                // !Logout Button
+                Container(
+                  width: 200,
+                  height: 50,
+                  padding: EdgeInsets.only(left: 50, right: 50),
+                  child: FlatButton(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0)),
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    color: Colors.red,
+                    splashColor: Colors.transparent,
+                    textColor: Colors.white,
+                    onPressed: logoutUser,
+                  ),
+                ),
+                 SizedBox(
+                  height: 20,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
-
-// class Settings extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return 
-//   }
-// }
