@@ -50,37 +50,37 @@ class HomeScreenState extends State<HomeScreen> {
           controller: _textEditingController,
           style: TextStyle(fontSize: 18.0, color: Colors.white),
           decoration: InputDecoration(
-              contentPadding: const EdgeInsets.only(bottom: 8),
-              hintText: 'Search for users',
-              hintStyle: TextStyle(
-                color: Colors.white,
-              ),
-              enabledBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-              focusedBorder: UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.white),
-              ),
-              //  focusedBorder: InputBorder.none,
-              prefixIcon: Icon(
-                Icons.person_pin,
+            contentPadding: const EdgeInsets.only(bottom: 8),
+            hintText: 'Search for users',
+            hintStyle: TextStyle(
+              color: Colors.white,
+            ),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            //  focusedBorder: InputBorder.none,
+            prefixIcon: Icon(
+              Icons.person_pin,
+              color: Colors.white,
+              size: 30,
+            ),
+            suffix: IconButton(
+              icon: Icon(
+                Icons.clear,
                 color: Colors.white,
                 size: 30,
               ),
-              suffix: IconButton(
-                icon: Icon(
-                  Icons.clear,
-                  color: Colors.white,
-                  size: 30,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _textEditingController.clear();
-                  });
-                },
-              ),
-              ),
-              onFieldSubmitted: implementSearch,
+              onPressed: () {
+                setState(() {
+                  _textEditingController.clear();
+                });
+              },
+            ),
+          ),
+          onFieldSubmitted: implementSearch,
         ),
       ),
       automaticallyImplyLeading: false,
@@ -106,107 +106,125 @@ class HomeScreenState extends State<HomeScreen> {
     );
   }
 
-void implementSearch(String userName){
+  void implementSearch(String userName) {
+    Future<QuerySnapshot> allDockchatusers = Firestore.instance
+        .collection('users')
+        .where('nickname', isGreaterThanOrEqualTo: userName)
+        .getDocuments();
+    setState(() {
+      futureSearchResults = allDockchatusers;
+    });
+  }
 
-Future<QuerySnapshot> allDockchatusers = Firestore.instance.collection('users').where('nickname', isGreaterThanOrEqualTo: userName).getDocuments();
-setState(() {
-  futureSearchResults = allDockchatusers;
-});
-
- }
-
-displayNOsearchResultScreen(){
-  final Orientation orientation = MediaQuery.of(context).orientation;
-return Container(
-  child: Center(
-    child: ListView(
-      shrinkWrap: true,
-      children: <Widget>[
- Icon(Icons.group, size: 200, color: Colors.white,),
-        Text('Search user', style: TextStyle(
-          fontWeight: FontWeight.w700 ,  color: Colors.white, fontSize: 50,
+  displayNOsearchResultScreen() {
+    final Orientation orientation = MediaQuery.of(context).orientation;
+    return Container(
+      child: Center(
+        child: ListView(
+          shrinkWrap: true,
+          children: <Widget>[
+            Icon(
+              Icons.group,
+              size: 200,
+              color: Colors.white,
+            ),
+            Text(
+              'Search user',
+              style: TextStyle(
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                fontSize: 50,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
-        textAlign: TextAlign.center,),
+      ),
+    );
+  }
 
-      ],
-    ),
-  ),
-);
+  userFoundScreen() {
+    return FutureBuilder(
+      future: futureSearchResults,
+      builder: (context, datasnapshot) {
+        if (!datasnapshot.hasData) {
+          return circularProgress();
+        } else {
+          List<UserResult> searchResultList = [];
+          datasnapshot.data.documents.forEach((document) {
+            User eachuser = User.fromDocument(document);
+            UserResult userResult = UserResult(
+              eachuser: eachuser,
+            );
 
-}
-
-userFoundScreen(){
-
-  return FutureBuilder(
-   future: futureSearchResults,
-  
-   builder: (context,datasnapshot){ 
-     if(!datasnapshot.hasData){
-
-       return circularProgress();
-     } else {
-
-List <UserResult> searchResultList =[];
-datasnapshot.data.documents.forEach((document){
-
-User eachuser = User.fromDocument(document);
-UserResult userResult = UserResult(eachuser: eachuser,);
-
-if(currentuserId!=document['id']){
-
-//checking for same user can't search for himself 
+            if (currentuserId != document['id']) {
+//checking for same user can't search for himself
 // showing users if  search user is not same as current user
-searchResultList.add(userResult);
-}
-});
-return ListView(
-  children: searchResultList,
-);
-     }
-   },
-  
-  
-  );
-}
+              searchResultList.add(userResult);
+            }
+          });
+          return ListView(
+            children: searchResultList,
+          );
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xff251F34),
       appBar: homePageHeader(),
-      body:  futureSearchResults == null ? displayNOsearchResultScreen(): userFoundScreen(),
+      body: futureSearchResults == null
+          ? displayNOsearchResultScreen()
+          : userFoundScreen(),
     );
-
-    
   }
 }
-
-
 
 class UserResult extends StatelessWidget {
   final User eachuser;
 
   const UserResult({Key key, this.eachuser}) : super(key: key);
+
+  // sendUsertoChatPage(BuildContext context) {
+  //   Navigator.push(context, MaterialPageRoute(builder: (context) => Chat(receiverId:eachuser.id , receiverImage:eachuser.photoUrl,receiverName:eachuser.nickname)));
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-      ),
-      child: Column(
-        children: <Widget>[
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.black,
-              backgroundImage: CachedNetworkImageProvider(eachuser.photoUrl),
-            ),
-            title: Text(eachuser.nickname, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey),),
-            subtitle: Text("Joined DockChat at :"+ DateFormat("dd MMMM , yyyy - hh:mm:aa").format(DateTime.fromMillisecondsSinceEpoch(int.parse(eachuser.createdAt)))
-          , style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey),),
-          )
-        ],
-      )
-    ); 
+        padding: EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+        ),
+        child: Column(
+          children: <Widget>[
+            GestureDetector(
+              onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => Chat(receiverId:eachuser.id , receiverImage:eachuser.photoUrl,receiverName:eachuser.nickname))),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: Colors.black,
+                  backgroundImage:
+                      CachedNetworkImageProvider(eachuser.photoUrl),
+                ),
+                title: Text(
+                  eachuser.nickname,
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, color: Colors.grey),
+                ),
+                subtitle: Text(
+                  "Joined DockChat at :" +
+                      DateFormat("dd MMMM , yyyy - hh:mm:aa").format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              int.parse(eachuser.createdAt))),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, color: Colors.grey),
+                ),
+              ),
+            )
+          ],
+        ));
   }
 }

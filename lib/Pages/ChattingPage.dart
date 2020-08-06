@@ -12,9 +12,39 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Chat extends StatelessWidget {
+  final String receiverId;
+  final String receiverName;
+  final String receiverImage;
+
+  const Chat({Key key, this.receiverId, this.receiverName, this.receiverImage}) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: CircleAvatar(
+              backgroundColor: Colors.black,
+              backgroundImage: CachedNetworkImageProvider(receiverImage),
+            ),
+            ),
+           
+        ],
+         // to change the theme of backbutton 
+        iconTheme: IconThemeData(
+          color: Colors.white,
+
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
+        title: Text(receiverName ,style: TextStyle(fontWeight: FontWeight.w700,
+        color: Colors.white
+        ),
+        ),
+        centerTitle: true,
+      ),
+    );
   }
 }
 
