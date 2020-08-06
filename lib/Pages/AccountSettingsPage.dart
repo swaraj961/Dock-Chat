@@ -34,21 +34,20 @@ class _SettingScreenState extends State<SettingScreen> {
     readDataFromLocal();
     super.initState();
   }
- GoogleSignIn _googleSignIn = GoogleSignIn();
-  
+
+  GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<Null> logoutUser() async {
     await FirebaseAuth.instance.signOut();
     await _googleSignIn.disconnect();
     await _googleSignIn.signOut();
 
-setState(() {
-  isLoading = false;
-});
+    setState(() {
+      isLoading = false;
+    });
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (context) => MyApp()),
         (Route<dynamic> route) => false);
-
   }
 
   void readDataFromLocal() async {
@@ -71,9 +70,79 @@ setState(() {
         isLoading = true;
       });
     }
+    uploadImageToFirebaseStorage();
   }
 
-  void uploadImageToFirebaseStorage() {}
+  Future uploadImageToFirebaseStorage() async {
+    String fileName = nickname;
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child(fileName);
+    StorageUploadTask storageUploadTask =
+        storageReference.putFile(imagefileAvator);
+    StorageTaskSnapshot storageTaskSnapshot;
+// once uploading is done
+    storageUploadTask.onComplete.then((value) {
+      if (value.error == null) {
+        storageTaskSnapshot = value;
+        storageTaskSnapshot.ref.getDownloadURL().then((value) {
+          setState(() {
+            photoUrl = value;
+          });
+// now updating data to firestore
+          Firestore.instance.collection('users').document(id).updateData({
+            "photoUrl": photoUrl,
+            "nickname": nickname,
+            "aboutMe": aboutMe
+          }).then((value) async {
+// updating data to local
+            await preferences.setString("photoUrl", photoUrl);
+            setState(() {
+              isLoading = false;
+            });
+
+            Fluttertoast.showToast(msg: "Updated successfully", backgroundColor: Theme.of(context).primaryColor
+            );
+          });
+        }, onError: (errorMsg) {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(msg: "Error in Getting the Download Url", backgroundColor: Theme.of(context).primaryColor);
+        });
+      }
+    }, onError: (errorMsg) {
+      setState(() {
+        isLoading = false;
+      });
+      Fluttertoast.showToast(msg: errorMsg.toString(), backgroundColor: Theme.of(context).primaryColor);
+    });
+  }
+
+  void updateData() {
+    nickNameFocusNode.unfocus();
+    aboutMeFocusNode.unfocus();
+    setState(() {
+      isLoading = false;
+    });
+
+// now updating data to firestore
+    Firestore.instance.collection('users').document(id).updateData({
+      "photoUrl": photoUrl,
+      "nickname": nickname,
+      "aboutMe": aboutMe
+    }).then((value) async {
+// updating data to local
+      await preferences.setString("photoUrl", photoUrl);
+      await preferences.setString("aboutMe", aboutMe);
+      await preferences.setString("nickname", nickname);
+      setState(() {
+        isLoading = false;
+      });
+
+      Fluttertoast.showToast(msg: "Updated successfully", backgroundColor: Theme.of(context).primaryColor);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,7 +260,7 @@ setState(() {
                     controller: nickNametextEditingController,
                     decoration: InputDecoration(
                       focusedBorder: InputBorder.none,
-                      hintText: "E.g Swaraj",
+                      hintText: "E.g Your Name",
                       contentPadding: EdgeInsets.all(5),
                       hintStyle: TextStyle(
                         color: Colors.white,
@@ -262,7 +331,7 @@ setState(() {
                     color: Colors.green,
                     splashColor: Colors.transparent,
                     textColor: Colors.white,
-                    onPressed: () {},
+                    onPressed: updateData,
                   ),
                 ),
                 SizedBox(
@@ -286,7 +355,7 @@ setState(() {
                     onPressed: logoutUser,
                   ),
                 ),
-                 SizedBox(
+                SizedBox(
                   height: 20,
                 ),
               ],

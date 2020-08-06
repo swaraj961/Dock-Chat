@@ -57,7 +57,7 @@ class LoginScreenState extends State<LoginScreen> {
 
       // SAVE DATA: User is new and need to store the information in fireStore
       if (documentSnapshot.length == 0) {
-        Firestore.instance.collection('users').document().setData({
+        Firestore.instance.collection('users').document(myFirebaseUser.uid).setData({
           "nickname": myFirebaseUser.displayName,
           "photoUrl": myFirebaseUser.photoUrl,
           "id": myFirebaseUser.uid,
