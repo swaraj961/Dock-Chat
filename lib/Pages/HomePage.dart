@@ -126,13 +126,13 @@ class HomeScreenState extends State<HomeScreen> {
             Icon(
               Icons.group,
               size: 150,
-              color: Colors.white,
+              color: Colors.grey,
             ),
             Text(
               'Search users',
               style: TextStyle(
                 fontWeight: FontWeight.w700,
-                color: Colors.white,
+                color: Colors.grey,
                 fontSize: 30,
               ),
               textAlign: TextAlign.center,
@@ -174,7 +174,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff251F34),
+      // backgroundColor: Color(0xff251F34),
       appBar: homePageHeader(),
       body: futureSearchResults == null
           ? displayNOsearchResultScreen()

@@ -10,6 +10,7 @@ class MyApp extends StatelessWidget {
       title: 'DockChat',
       theme: ThemeData(
         primaryColor: Color(0xff14DAE2),
+        
       ),
       home: BoardingScreen(),
       debugShowCheckedModeBanner: false,

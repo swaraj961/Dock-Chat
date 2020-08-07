@@ -74,7 +74,7 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   Future uploadImageToFirebaseStorage() async {
-    String fileName = nickname;
+    String fileName = id;
     StorageReference storageReference =
         FirebaseStorage.instance.ref().child(fileName);
     StorageUploadTask storageUploadTask =
@@ -119,8 +119,8 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void updateData() {
-    nickNameFocusNode.unfocus();
-    aboutMeFocusNode.unfocus();
+    nickNameFocusNode.requestFocus();
+    aboutMeFocusNode.requestFocus();
     setState(() {
       isLoading = false;
     });
@@ -146,7 +146,7 @@ class _SettingScreenState extends State<SettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff251F34),
+      // backgroundColor: Color(0xff251F34),
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         iconTheme: IconThemeData(
@@ -234,14 +234,14 @@ class _SettingScreenState extends State<SettingScreen> {
                   child: isLoading ? circularProgress() : Container(),
                 ),
 
-                // !Update UI
+                //  Update UI
 
                 Container(
                   margin: EdgeInsets.only(left: 10, bottom: 12, top: 10),
                   child: Text(
                     'Profile Name',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.grey,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -259,6 +259,7 @@ class _SettingScreenState extends State<SettingScreen> {
                     textAlign: TextAlign.center,
                     controller: nickNametextEditingController,
                     decoration: InputDecoration(
+                border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       hintText: "E.g Your Name",
                       contentPadding: EdgeInsets.all(5),
@@ -281,7 +282,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   child: Text(
                     'About ME',
                     style: TextStyle(
-                      color: Colors.white,
+                      color: Colors.grey,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -300,7 +301,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     textAlign: TextAlign.center,
                     controller: aboutMetextEditingController,
                     decoration: InputDecoration(
-                      focusedBorder: InputBorder.none,
+                       border: InputBorder.none,
+                       focusedBorder: InputBorder.none,
                       hintText: "E.g Hey there ! I am Using DockChat",
                       contentPadding: EdgeInsets.all(5),
                       hintStyle: TextStyle(
@@ -315,13 +317,13 @@ class _SettingScreenState extends State<SettingScreen> {
                   margin: EdgeInsets.only(left: 30, right: 30),
                 ),
 
-                // !Update Button
+                // Update Button
                 Container(
                   width: 200,
                   height: 70,
                   padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
                   margin: EdgeInsets.only(top: 50, bottom: 2),
-                  child: FlatButton(
+                  child: RaisedButton(
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30.0)),
                     child: Text(
@@ -337,12 +339,12 @@ class _SettingScreenState extends State<SettingScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                // !Logout Button
+                // Logout Button
                 Container(
                   width: 200,
                   height: 50,
                   padding: EdgeInsets.only(left: 50, right: 50),
-                  child: FlatButton(
+                  child: RaisedButton(
                     shape: new RoundedRectangleBorder(
                         borderRadius: new BorderRadius.circular(30.0)),
                     child: Text(
