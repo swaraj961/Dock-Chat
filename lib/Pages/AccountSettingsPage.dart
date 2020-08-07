@@ -77,8 +77,7 @@ class _SettingScreenState extends State<SettingScreen> {
     String fileName = id;
     StorageReference storageReference =
         FirebaseStorage.instance.ref().child(fileName);
-    StorageUploadTask storageUploadTask =
-        storageReference.putFile(imagefileAvator);
+    StorageUploadTask storageUploadTask =storageReference.putFile(imagefileAvator);
     StorageTaskSnapshot storageTaskSnapshot;
 // once uploading is done
     storageUploadTask.onComplete.then((value) {

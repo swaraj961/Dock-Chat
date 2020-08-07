@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -62,19 +63,50 @@ class ChatScreen extends StatefulWidget {
 class ChatScreenState extends State<ChatScreen> {
   final String receiverId;
   final String receiverImage;
+  File imagefile;
+  String imageUrl;
+  String chatID;
+  SharedPreferences sharedPreferences;
+  String id;
+  var listMessages;
+
 
   ChatScreenState({this.receiverId, this.receiverImage});
   final TextEditingController textEditingController = TextEditingController();
   final FocusNode focusNode = FocusNode();
+  final ScrollController listscrollController= ScrollController();
   bool isDisplaySticker;
   bool isLoading;
+ 
 
   @override
   void initState() {
     isDisplaySticker = false;
     isLoading = false;
     focusNode.addListener(onFocusChange);
+    chatID="";
+    readFromLocal();
     super.initState();
+  }
+
+  readFromLocal() async{
+    // best way to use sharedpreferces 
+sharedPreferences = await SharedPreferences.getInstance();
+id = sharedPreferences.getString("id") ?? "";
+
+if(id.hashCode <= receiverId.hashCode){
+
+  chatID = '$id-$receiverId';
+} else {
+   chatID = '$receiverId-$id';
+}
+Firestore.instance.collection("users").document(id).updateData({
+  "chattingWith": receiverId
+  
+});
+setState(() {
+  
+});
   }
 
   onFocusChange() {
@@ -103,7 +135,7 @@ class ChatScreenState extends State<ChatScreen> {
             child: Container(
               color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 1.0),
-              child: IconButton(icon: Icon(Icons.image), onPressed: null),
+              child: IconButton(icon: Icon(Icons.image), onPressed:getImageFromGallery),
             ),
           ),
           // suffix emoji iconbutton
@@ -138,8 +170,9 @@ class ChatScreenState extends State<ChatScreen> {
                       Icons.send,
                       color: Theme.of(context).primaryColor,
                     ),
-                    onPressed: null)),
-          )
+                    onPressed:onSendMessage(textEditingController.text,0)),
+          ),
+          ),
         ],
       ),
     );
@@ -147,11 +180,36 @@ class ChatScreenState extends State<ChatScreen> {
 
   createListofChat() {
     return Flexible(
-        child: Center(
+        child: chatID == "" ?  Center(
       child: CircularProgressIndicator(
         valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
       ),
-    ));
+    ) : StreamBuilder(
+      stream: Firestore.instance.collection('messages').document(chatID).collection(chatID).orderBy("timestamp", descending: true).limit(20).snapshots(),
+
+      builder: (context , snapshot){
+        if(!snapshot.hasData ){
+          return  Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+      ),
+    );
+        } else {
+
+          listMessages  = snapshot.data.documents;
+          return ListView.builder(
+            padding: EdgeInsets.all(10),
+            itemCount: snapshot.data.documents.length,
+            reverse: true,
+            controller: listscrollController,
+          //   itemBuilder: (BuildContext context, int index) {
+          //   return  createItem(index, snapshot.data.documents[index]);
+          //  },
+          );
+
+        }
+      }),
+    );
   }
 
   createStickers() {
@@ -178,7 +236,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                  onPressed: onSendMessage("mimi1",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -187,7 +245,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("mimi2",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -196,7 +254,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("mimi3",2),
                 ),
               ],
             ),
@@ -215,7 +273,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("mimi4",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -224,8 +282,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
-                ),
+                onPressed: onSendMessage("mimi5",2),),
                 FlatButton(
                   child: Image.asset(
                     "images/stickers/mimi6.gif",
@@ -233,7 +290,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                onPressed: onSendMessage("mimi6",2),
                 ),
               ],
             ),
@@ -252,7 +309,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                onPressed: onSendMessage("mimi17",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -261,7 +318,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                  onPressed: onSendMessage("mimi8",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -270,7 +327,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("mimi9",2),
                 ),
               ],
             ),
@@ -289,7 +346,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                  onPressed: onSendMessage("cute4",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -298,7 +355,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                  onPressed: onSendMessage("cute5",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -307,7 +364,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                   onPressed: onSendMessage("cute6",2),
                 ),
               ],
             ),
@@ -326,7 +383,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("cute1",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -335,7 +392,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("cute2",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -344,7 +401,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("cute3",2),
                 ),
               ],
             ),
@@ -363,7 +420,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("cute7",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -372,7 +429,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                  onPressed: onSendMessage("cute8",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -381,7 +438,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+             onPressed: onSendMessage("cute9",2),
                 ),
               ],
             ),
@@ -399,7 +456,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                onPressed: onSendMessage("cute10",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -408,7 +465,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("cute11",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -417,7 +474,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                onPressed: onSendMessage("cute12",2),
                 ),
               ],
             ),
@@ -436,7 +493,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                  onPressed: onSendMessage("cute13",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -445,7 +502,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                onPressed: onSendMessage("cute14",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -454,7 +511,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("cute15",2),
                 ),
               ],
             ),
@@ -473,7 +530,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("cute16",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -482,7 +539,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                 onPressed: onSendMessage("cute17",2),
                 ),
                 FlatButton(
                   child: Image.asset(
@@ -491,7 +548,7 @@ class ChatScreenState extends State<ChatScreen> {
                     height: 50,
                     fit: BoxFit.cover,
                   ),
-                  onPressed: null,
+                  onPressed: onSendMessage("mimi10",2),
                 ),
               ],
             ),
@@ -500,6 +557,7 @@ class ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+
 
   void getSticker() {
     focusNode.unfocus();
@@ -524,6 +582,64 @@ class ChatScreenState extends State<ChatScreen> {
       child: isLoading ? circularProgress() : Container(),
     );
   }
+Future getImageFromGallery() async {
+    var pickedfile = await ImagePicker().getImage(source: ImageSource.gallery);
+    if (pickedfile != null) {
+      setState(() {
+      imagefile = File(pickedfile.path);
+        isLoading = true;
+      });
+    }
+    uploadImageToFirebaseStorage();
+  }
+ Future uploadImageToFirebaseStorage() async {
+  //  bestway to code
+  String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+  StorageReference storageReference = FirebaseStorage.instance.ref().child("Chat Images").child(fileName);
+  StorageUploadTask storageUploadTask =  storageReference.putFile(imagefile);
+ StorageTaskSnapshot storageTaskSnapshot = await storageUploadTask.onComplete;
+ storageTaskSnapshot.ref.getDownloadURL().then((value) {
+setState(() {
+  imageUrl = value;
+  isLoading = false;
+  onSendMessage(imageUrl,1);
+});
+
+ }, onError: (error){
+   setState(() {
+     isLoading = false;
+   });
+   Fluttertoast.showToast(msg: "Error :"+error.toString());
+ });
+
+}
+
+ onSendMessage(String contextMsg, int type){
+
+//  type =0: its a text message
+//  type =1: its a imageFile
+//  type =2:its a StickerEmojies
+
+if(contextMsg!=""){
+  textEditingController.clear();
+  var docMsgRef = Firestore.instance.collection("messages").document(chatID).collection(chatID).document(DateTime.now().millisecondsSinceEpoch.toString());
+ Firestore.instance.runTransaction((transaction) async{
+   await transaction.set( docMsgRef, {
+     "idFrom": id,
+     "idTo": receiverId,
+     "timestamp":DateTime.now().millisecondsSinceEpoch.toString(),
+     "contextMsg":contextMsg,
+     "type":type
+   });
+ });
+listscrollController.animateTo(0.0, duration: Duration(microseconds: 300), curve: Curves.easeOut);
+
+}else {
+  Fluttertoast.showToast(msg: "Empty message can't be send !");
+}
+
+
+}
 
   @override
   Widget build(BuildContext context) {
