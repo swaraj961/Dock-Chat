@@ -16,8 +16,9 @@ class Chat extends StatelessWidget {
   final String receiverName;
   final String receiverImage;
 
-  const Chat({Key key, this.receiverId, this.receiverName, this.receiverImage}) : super(key: key);
-  
+  Chat({Key key, this.receiverId, this.receiverName, this.receiverImage})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,33 +30,129 @@ class Chat extends StatelessWidget {
               backgroundColor: Colors.black,
               backgroundImage: CachedNetworkImageProvider(receiverImage),
             ),
-            ),
-           
+          ),
         ],
-         // to change the theme of backbutton 
+        // to change the theme of backbutton
         iconTheme: IconThemeData(
           color: Colors.white,
-
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        title: Text(receiverName ,style: TextStyle(fontWeight: FontWeight.w700,
-        color: Colors.white
-        ),
+        title: Text(
+          receiverName,
+          style: TextStyle(fontWeight: FontWeight.w700, color: Colors.white),
         ),
         centerTitle: true,
       ),
+      body: ChatScreen(receiverId: receiverId, receiverImage: receiverImage),
     );
   }
 }
 
 class ChatScreen extends StatefulWidget {
+  final String receiverId;
+  final String receiverImage;
+
+  const ChatScreen({Key key, this.receiverId, this.receiverImage})
+      : super(key: key);
+
   @override
-  State createState() => ChatScreenState();
+  State createState() =>
+      ChatScreenState(receiverId: receiverId, receiverImage: receiverImage);
 }
 
 class ChatScreenState extends State<ChatScreen> {
+  final String receiverId;
+  final String receiverImage;
+
+  ChatScreenState({this.receiverId, this.receiverImage});
+  final TextEditingController textEditingController = TextEditingController();
+  final FocusNode focusNode = FocusNode();
+
+  createInput() {
+    return Container(
+      width: double.infinity,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(color: Colors.grey, width: 0.5),
+        ),
+      ),
+      child: Row(
+        children: <Widget>[
+          //  leading Image icon
+          Material(
+            child: Container(
+              color: Colors.white,
+              margin: EdgeInsets.symmetric(horizontal: 1.0),
+              child: IconButton(icon: Icon(Icons.image), onPressed: null),
+            ),
+          ),
+// suffix emoji iconbutton
+          Material(
+            child: Container(
+              color: Colors.white,
+              margin: EdgeInsets.symmetric(horizontal: 1.0),
+              child: IconButton(icon: Icon(Icons.face), onPressed: null),
+            ),
+          ),
+
+          //  usermsg text feild
+          Flexible(
+            child: Container(
+              child: TextField(
+                controller: textEditingController,
+                decoration: InputDecoration(
+                  hintText: "Write a text here ...",
+                  hintStyle: TextStyle(color: Colors.grey),
+                ),
+                focusNode: focusNode,
+              ),
+            ),
+          ),
+          // send msg button
+          Material(
+            child: Container(
+                color: Colors.white,
+                margin: EdgeInsets.symmetric(horizontal: 8.0),
+                child: IconButton(
+                    icon: Icon(
+                      Icons.send,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: null)),
+          )
+        ],
+      ),
+    );
+  }
+
+  createListofChat() {
+    return Flexible(
+        child: Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation(Theme.of(context).primaryColor),
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return WillPopScope(
+      onWillPop: null,
+      child: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              // list of message section
+              createListofChat(),
+
+              // user send section
+              createInput()
+            ],
+          )
+        ],
+      ),
+    );
   }
 }

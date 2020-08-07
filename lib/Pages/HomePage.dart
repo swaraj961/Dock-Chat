@@ -125,15 +125,15 @@ class HomeScreenState extends State<HomeScreen> {
           children: <Widget>[
             Icon(
               Icons.group,
-              size: 200,
+              size: 150,
               color: Colors.white,
             ),
             Text(
-              'Search user',
+              'Search users',
               style: TextStyle(
                 fontWeight: FontWeight.w700,
                 color: Colors.white,
-                fontSize: 50,
+                fontSize: 30,
               ),
               textAlign: TextAlign.center,
             ),
