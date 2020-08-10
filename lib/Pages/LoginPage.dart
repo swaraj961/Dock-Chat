@@ -107,7 +107,7 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xff251F34),
+      backgroundColor: Color(0xff292D38),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -136,15 +136,23 @@ class LoginScreenState extends State<LoginScreen> {
                   child: SizedBox(
                     width: 250,
                     height: 250,
-                    child: Image.asset('images/welcome.png'),
+                    child: Image.asset('images/logo.png'),
                   ),
                 ),
               ),
+               Text(
+                  'Welcome to DockChat',
+                  style: TextStyle(
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                      fontSize: 25),
+                ),
+              SizedBox(height: 20,),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                 child: Shimmer.fromColors(
                   baseColor: Colors.white,
-                  highlightColor: Color(0xfff3B324E),
+                  highlightColor: Color(0xff293238),
                   child: Text(
                     'Login',
                     style: TextStyle(

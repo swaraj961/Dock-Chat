@@ -116,50 +116,58 @@ class ChatScreenState extends State<ChatScreen> {
   createInput() {
     return Container(
       width: double.infinity,
-      height: 50,
+      height: 60,
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          top: BorderSide(color: Colors.grey, width: 0.5),
-        ),
+        //  color: Colors.white,
+        // border: Border(
+        //   top: BorderSide(color: Colors.grey, width: 0.5),
+        // ),
       ),
       child: Row(
         children: <Widget>[
           //  leading Image icon
           Material(
             child: Container(
-              color: Colors.white,
+              height: 60,
+              // color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
-                  icon: Icon(Icons.image), onPressed: getImageFromGallery),
+                  icon: Icon(Icons.image,color: Theme.of(context).primaryColor,), onPressed: getImageFromGallery),
             ),
           ),
           // suffix emoji iconbutton
           Material(
             child: Container(
-              color: Colors.white,
+               height: 60,
+              // color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 1.0),
-              child: IconButton(icon: Icon(Icons.face), onPressed: getSticker),
+              child: IconButton(icon: Icon(Icons.face ,color: Theme.of(context).primaryColor), onPressed: getSticker),
             ),
           ),
+  
 
           //  usermsg text feild
           Flexible(
-            child: Container(
-              child: TextField(
-                controller: textEditingController,
-                decoration: InputDecoration(
-                  hintText: "Write a text here ...",
-                  hintStyle: TextStyle(color: Colors.grey),
+            child: Material(
+                          child: Container(
+                             height: 60,
+                child: TextField(
+                  controller: textEditingController,
+                  decoration: InputDecoration(
+                    hintText: "  Write a text here ...",
+                    hintStyle: TextStyle(color: Colors.grey,
+                    ),
+                  ),
+                  focusNode: focusNode,
                 ),
-                focusNode: focusNode,
               ),
             ),
           ),
           // send msg button
           Material(
             child: Container(
-              color: Colors.white,
+               height: 60,
+              // color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 8.0),
               child: IconButton(
                   icon: Icon(
@@ -222,85 +230,110 @@ class ChatScreenState extends State<ChatScreen> {
   createItem(int index, DocumentSnapshot doc) {
 // sender is me : showing on right side
     if (doc["idFrom"] == id) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+      return Column(
         children: <Widget>[
-          // doc["type"]
-          // 0 = text , 1 = image , 2 = stickers
-          // doc["type"]==0 ? Container(text)  :  doc["type"]==1 ? Container(image): Container(stickers),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              // doc["type"]
+              // 0 = text , 1 = image , 2 = stickers
+              // doc["type"]==0 ? Container(text)  :  doc["type"]==1 ? Container(image): Container(stickers),
 
-          doc["type"] == 0
-              ? Container(
-                  padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                  margin: EdgeInsets.only(
-                      bottom: isLastMsgRight(index) ? 20 : 10, right: 10),
-                  width: 200,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
-                    bottomLeft: Radius.circular(15))
-                  ),
-                  child: Text(
-                    doc['contextMsg'],
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                )
-              : doc["type"] == 1
+              doc["type"] == 0
                   ? Container(
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
                       margin: EdgeInsets.only(
                           bottom: isLastMsgRight(index) ? 20 : 10, right: 10),
-                      child: FlatButton(
-                        onPressed: () => Navigator.push(context, MaterialPageRoute(
-                          builder: (context) =>
-                              FullPhoto(url: doc['contextMsg']),
-                        ),),
-                        child: Material(
-                            child: CachedNetworkImage(
-                              placeholder: (context, url) => Container(
-                                width: 200,
-                                height: 200,
-                                padding: EdgeInsets.all(70),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(
-                                      Theme.of(context).primaryColor),
-                                ),
-                              ),
-                              imageUrl: doc['contextMsg'],
-                              height: 200,
-                              width: 200,
-                              fit: BoxFit.cover,
-
-                              // if somehow image can't be retrive or showed then show not available image
-                              errorWidget: (context, url, error) => Material(
-                                  child: Image.asset(
-                                    'images/img_not_available.jpeg',
-                                    height: 200,
-                                    width: 200,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                  clipBehavior: Clip.hardEdge),
-                            ),
-                            borderRadius: BorderRadius.circular(8),
-                            clipBehavior: Clip.hardEdge),
+                      width: 200,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColor,
+                        borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        bottomRight: Radius.circular(15),
+                        bottomLeft: Radius.circular(15))
+                      ),
+                      child: Text(
+                        doc['contextMsg'],
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     )
-                  : Container(
-                      child: Image.asset(
-                        "images/stickers/${doc['contextMsg']}.gif",
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
+                    
+                  : doc["type"] == 1
+                      ? Container(
+                          margin: EdgeInsets.only(
+                              bottom: isLastMsgRight(index) ? 20 : 10, right: 10),
+                          child: FlatButton(
+                            onPressed: () => Navigator.push(context, MaterialPageRoute(
+                              builder: (context) =>
+                                  FullPhoto(url: doc['contextMsg']),
+                            ),),
+                            child: Material(
+                                child: CachedNetworkImage(
+                                  placeholder: (context, url) => Container(
+                                    width: 200,
+                                    height: 200,
+                                    padding: EdgeInsets.all(70),
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey,
+                                        borderRadius: BorderRadius.circular(8)),
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation(
+                                          Theme.of(context).primaryColor),
+                                    ),
+                                  ),
+                                  imageUrl: doc['contextMsg'],
+                                  height: 200,
+                                  width: 200,
+                                  fit: BoxFit.cover,
+
+                                  // if somehow image can't be retrive or showed then show not available image
+                                  errorWidget: (context, url, error) => Material(
+                                      child: Image.asset(
+                                        'images/img_not_available.jpeg',
+                                        height: 200,
+                                        width: 200,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                      clipBehavior: Clip.hardEdge),
+                                ),
+                                borderRadius: BorderRadius.circular(8),
+                                clipBehavior: Clip.hardEdge),
+                          ),
+                        )
+                      : Container(
+                        padding: EdgeInsets.only(bottom: 25),
+                          child: Image.asset(
+                            "images/stickers/${doc['contextMsg']}.gif",
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        
+                        
+            ],
+          ),
+          Column(
+            children: <Widget>[
+              Container(
+                    padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                      margin: EdgeInsets.only(
+                          bottom: isLastMsgRight(index) ? 20 : 10, left:10),
+                    child: Text(
+                      DateFormat("dd MMMM, yyyy- hh:mm:aa").format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              int.parse(doc["timestamp"]))),
+                      style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic),
+                    ))
+            ],
+          ),
         ],
       );
     } else {
@@ -348,7 +381,7 @@ class ChatScreenState extends State<ChatScreen> {
                        top: isLastMsgRight(index) ? 20 : 10, right: 10),
                     width: 200,
                     decoration: BoxDecoration(
-                      color: Colors.grey,
+                      color: Colors.grey[400],
                       borderRadius:  BorderRadius.only(
                     topRight: Radius.circular(15),
                     bottomRight: Radius.circular(15),
@@ -468,11 +501,17 @@ class ChatScreenState extends State<ChatScreen> {
     return Container(
       height: 200,
       padding: EdgeInsets.only(top: 20, bottom: 10),
-      decoration: BoxDecoration(
+      decoration: Theme.of(context).brightness==Brightness.light ? BoxDecoration(
           color: Colors.white,
           border: Border(
             top: BorderSide(color: Colors.grey, width: 0.5),
-          )),
+          ),
+          ): BoxDecoration(
+          color: Colors.blueGrey,
+          border: Border(
+            top: BorderSide(color: Colors.grey, width: 0.5),
+          ),
+          ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,

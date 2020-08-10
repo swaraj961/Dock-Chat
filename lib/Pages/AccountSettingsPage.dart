@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:dockchat/Widgets/ProgressWidget.dart';
@@ -156,6 +157,17 @@ class _SettingScreenState extends State<SettingScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Theme.of(context).brightness == Brightness.light? Image.asset("images/day.png"): Image.asset("images/night.png"),
+            onPressed: () {
+              DynamicTheme.of(context).setBrightness(
+                  Theme.of(context).brightness == Brightness.light
+                      ? Brightness.dark
+                      : Brightness.light);
+            },
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -235,8 +247,13 @@ class _SettingScreenState extends State<SettingScreen> {
 
                 //  Update UI
 
-                Container(
-                  margin: EdgeInsets.only(left: 10, bottom: 12, top: 10),
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: <Widget>[
+                    Icon(Icons.person,color: Colors.grey ,size: 18,),
+                    Container(
+                        margin: EdgeInsets.all(15),
+                  // margin: EdgeInsets.only(left: 10, bottom: 12, top: 10),
                   child: Text(
                     'Profile Name',
                     style: TextStyle(
@@ -245,6 +262,10 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ),
                 ),
+               
+                
+                 ],
+               ),
                 // usernameInfo
                 Container(
                   width: MediaQuery.of(context).size.width,
@@ -276,8 +297,13 @@ class _SettingScreenState extends State<SettingScreen> {
 
                 // UserAboutME Feild
 
-                Container(
-                  margin: EdgeInsets.only(left: 10, bottom: 12, top: 30),
+               Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: <Widget>[
+                   Icon(Icons.edit,color: Colors.grey,size: 18,),
+                    Container(
+                 margin: EdgeInsets.all(15),
+                  // margin: EdgeInsets.only(left: 10, bottom: 12, top: 30),
                   child: Text(
                     'About ME',
                     style: TextStyle(
@@ -286,6 +312,8 @@ class _SettingScreenState extends State<SettingScreen> {
                     ),
                   ),
                 ),
+                 ],
+               ),
                 // UserBio
                 Container(
                   width: MediaQuery.of(context).size.width,

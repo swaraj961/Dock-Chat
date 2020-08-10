@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dockchat/Models/user.dart';
-import 'package:dockchat/Pages/Extra/create_account.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:intl/intl.dart';
@@ -197,7 +196,7 @@ class UserResult extends StatelessWidget {
     return Container(
         padding: EdgeInsets.all(5),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).brightness==Brightness.light ?  Colors.grey[300] :Colors.black26 ,
         ),
         child: Column(
           children: <Widget>[

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 final pagelist = [
   PageModel(
-    color: Color(0xff251F34),
+    color: Color(0xff292D38),
     heroAssetPath: "images/board1.png",
     iconAssetPath: "images/phone.png",
     title: Text(
@@ -44,7 +44,7 @@ final pagelist = [
     ),
   ),
   PageModel(
-    color: Color(0xff251F34),
+    color:  Color(0xff292D38),
     heroAssetPath: "images/Group_chat.png",
     iconAssetPath: "images/connect.png",
     title: Text(
