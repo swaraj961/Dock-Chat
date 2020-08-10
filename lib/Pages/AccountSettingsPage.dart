@@ -12,6 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 class SettingScreen extends StatefulWidget {
   @override
@@ -99,9 +100,20 @@ class _SettingScreenState extends State<SettingScreen> {
             setState(() {
               isLoading = false;
             });
-
-            Fluttertoast.showToast(msg: "Updated successfully", backgroundColor: Theme.of(context).primaryColor
-            );
+AwesomeDialog(
+            context: context,
+            dialogType: DialogType.SUCCES,
+            animType: AnimType.BOTTOMSLIDE,
+            title: 'Photo Uploaded',
+            desc: 'Your photo has been updated succesfully',
+           btnOkText: 'Okay',
+           
+           btnOkColor: Theme.of(context).primaryColor,
+           btnOkOnPress: (){}
+            
+            )..show();
+            // Fluttertoast.showToast(msg: "Updated successfully", backgroundColor: Theme.of(context).primaryColor
+            // );
           });
         }, onError: (errorMsg) {
           setState(() {
@@ -142,6 +154,8 @@ class _SettingScreenState extends State<SettingScreen> {
       Fluttertoast.showToast(msg: "Updated successfully", backgroundColor: Theme.of(context).primaryColor);
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -381,7 +395,19 @@ class _SettingScreenState extends State<SettingScreen> {
                     color: Colors.red,
                     splashColor: Colors.transparent,
                     textColor: Colors.white,
-                    onPressed: logoutUser,
+                    onPressed: (){
+                     AwesomeDialog(
+            context: context,
+            dialogType: DialogType.WARNING,
+            animType: AnimType.BOTTOMSLIDE,
+            title: 'You will be logout',
+            desc: 'Do you want to continue.. ?',
+            btnCancelOnPress: () {},
+            btnOkOnPress: () {
+              logoutUser();
+            },
+            )..show();
+                    }
                   ),
                 ),
                 SizedBox(
