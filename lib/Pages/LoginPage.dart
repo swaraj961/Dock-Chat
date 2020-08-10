@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:dockchat/Models/user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -184,20 +183,6 @@ class LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.all(2),
                 child: isLoading ? circularProgress() : Container(),
               ),
-
-              //         SizedBox(
-              //   height:60,
-              // ),
-              // Text(
-              //   'Version 1.0',
-              //   style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
-              //   textAlign: TextAlign.center,
-              // ),
-              // Text(
-              //   'Developed by © Swaraj',
-              //   style: TextStyle(color: Colors.grey, letterSpacing: 1.2),
-              //   textAlign: TextAlign.center,
-              // ),
             ],
           ),
           Positioned(
