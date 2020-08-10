@@ -84,7 +84,7 @@ class LoginScreenState extends State<LoginScreen> {
       backgroundColor: Theme.of(context).primaryColor);
       setState(() {
         isLoading = false;
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => HomeScreen(
@@ -128,7 +128,7 @@ class LoginScreenState extends State<LoginScreen> {
           Column(
             children: <Widget>[
               SizedBox(
-                height: 60,
+                height: 50,
               ),
               Center(
                 child: Hero(
@@ -145,7 +145,7 @@ class LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(
                       color: Colors.grey[600],
                       fontWeight: FontWeight.w500,
-                      fontSize: 25),
+                      fontSize: 22),
                 ),
               SizedBox(height: 20,),
               Padding(

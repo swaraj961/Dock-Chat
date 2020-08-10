@@ -19,6 +19,12 @@ class Chat extends StatelessWidget {
   Chat({Key key, this.receiverId, this.receiverName, this.receiverImage})
       : super(key: key);
 
+      void lastmessage(DocumentSnapshot doc){
+        if (doc["idFrom"] == receiverId)
+       Text(doc['timestamp']);
+
+      }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,9 +32,40 @@ class Chat extends StatelessWidget {
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: CircleAvatar(
-              backgroundColor: Colors.black,
-              backgroundImage: CachedNetworkImageProvider(receiverImage),
+            child: GestureDetector(
+              onTap: () {
+                showModalBottomSheet(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(25.0),
+                    ),
+                  ),
+                  context: context,
+                  builder: (context) => Container(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 25, bottom: 20),
+                      child: Column(
+                        children: <Widget>[
+                     CircleAvatar(
+                       radius: 50,
+                backgroundColor: Colors.black,
+                backgroundImage: CachedNetworkImageProvider(receiverImage),
+              ),
+                          SizedBox(height: 20,),
+                          Text('Chatting with : '+receiverName,style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey :Colors.white, fontWeight: FontWeight.w600),),
+                            SizedBox(height: 20,),
+                          
+                          
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: CircleAvatar(
+                backgroundColor: Colors.black,
+                backgroundImage: CachedNetworkImageProvider(receiverImage),
+              ),
             ),
           ),
         ],
@@ -118,11 +155,11 @@ class ChatScreenState extends State<ChatScreen> {
       width: double.infinity,
       height: 60,
       decoration: BoxDecoration(
-        //  color: Colors.white,
-        // border: Border(
-        //   top: BorderSide(color: Colors.grey, width: 0.5),
-        // ),
-      ),
+          //  color: Colors.white,
+          // border: Border(
+          //   top: BorderSide(color: Colors.grey, width: 0.5),
+          // ),
+          ),
       child: Row(
         children: <Widget>[
           //  leading Image icon
@@ -132,30 +169,36 @@ class ChatScreenState extends State<ChatScreen> {
               // color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 1.0),
               child: IconButton(
-                  icon: Icon(Icons.image,color: Theme.of(context).primaryColor,), onPressed: getImageFromGallery),
+                  icon: Icon(
+                    Icons.image,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: getImageFromGallery),
             ),
           ),
           // suffix emoji iconbutton
           Material(
             child: Container(
-               height: 60,
+              height: 60,
               // color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 1.0),
-              child: IconButton(icon: Icon(Icons.face ,color: Theme.of(context).primaryColor), onPressed: getSticker),
+              child: IconButton(
+                  icon: Icon(Icons.face, color: Theme.of(context).primaryColor),
+                  onPressed: getSticker),
             ),
           ),
-  
 
           //  usermsg text feild
           Flexible(
             child: Material(
-                          child: Container(
-                             height: 60,
+              child: Container(
+                height: 60,
                 child: TextField(
                   controller: textEditingController,
                   decoration: InputDecoration(
                     hintText: "  Write a text here ...",
-                    hintStyle: TextStyle(color: Colors.grey,
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
                     ),
                   ),
                   focusNode: focusNode,
@@ -166,7 +209,7 @@ class ChatScreenState extends State<ChatScreen> {
           // send msg button
           Material(
             child: Container(
-               height: 60,
+              height: 60,
               // color: Colors.white,
               margin: EdgeInsets.symmetric(horizontal: 8.0),
               child: IconButton(
@@ -174,7 +217,7 @@ class ChatScreenState extends State<ChatScreen> {
                     Icons.send,
                     color: Theme.of(context).primaryColor,
                   ),
-                  onPressed:() {
+                  onPressed: () {
                     setState(() {
                       onSendMessage(textEditingController.text, 0);
                     });
@@ -246,12 +289,11 @@ class ChatScreenState extends State<ChatScreen> {
                           bottom: isLastMsgRight(index) ? 20 : 10, right: 10),
                       width: 200,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        bottomRight: Radius.circular(15),
-                        bottomLeft: Radius.circular(15))
-                      ),
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15),
+                              bottomLeft: Radius.circular(15))),
                       child: Text(
                         doc['contextMsg'],
                         style: TextStyle(
@@ -260,16 +302,19 @@ class ChatScreenState extends State<ChatScreen> {
                         ),
                       ),
                     )
-                    
                   : doc["type"] == 1
                       ? Container(
                           margin: EdgeInsets.only(
-                              bottom: isLastMsgRight(index) ? 20 : 10, right: 10),
+                              bottom: isLastMsgRight(index) ? 20 : 10,
+                              right: 10),
                           child: FlatButton(
-                            onPressed: () => Navigator.push(context, MaterialPageRoute(
-                              builder: (context) =>
-                                  FullPhoto(url: doc['contextMsg']),
-                            ),),
+                            onPressed: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    FullPhoto(url: doc['contextMsg']),
+                              ),
+                            ),
                             child: Material(
                                 child: CachedNetworkImage(
                                   placeholder: (context, url) => Container(
@@ -290,22 +335,24 @@ class ChatScreenState extends State<ChatScreen> {
                                   fit: BoxFit.cover,
 
                                   // if somehow image can't be retrive or showed then show not available image
-                                  errorWidget: (context, url, error) => Material(
-                                      child: Image.asset(
-                                        'images/img_not_available.jpeg',
-                                        height: 200,
-                                        width: 200,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      borderRadius: BorderRadius.circular(8),
-                                      clipBehavior: Clip.hardEdge),
+                                  errorWidget: (context, url, error) =>
+                                      Material(
+                                          child: Image.asset(
+                                            'images/img_not_available.jpeg',
+                                            height: 200,
+                                            width: 200,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          clipBehavior: Clip.hardEdge),
                                 ),
                                 borderRadius: BorderRadius.circular(8),
                                 clipBehavior: Clip.hardEdge),
                           ),
                         )
                       : Container(
-                        padding: EdgeInsets.only(bottom: 25),
+                          padding: EdgeInsets.only(bottom: 25),
                           child: Image.asset(
                             "images/stickers/${doc['contextMsg']}.gif",
                             height: 100,
@@ -313,25 +360,23 @@ class ChatScreenState extends State<ChatScreen> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        
-                        
             ],
           ),
           Column(
             children: <Widget>[
               Container(
-                    padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                      margin: EdgeInsets.only(
-                          bottom: isLastMsgRight(index) ? 20 : 10, left:10),
-                    child: Text(
-                      DateFormat("dd MMMM, yyyy- hh:mm:aa").format(
-                          DateTime.fromMillisecondsSinceEpoch(
-                              int.parse(doc["timestamp"]))),
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic),
-                    ))
+                  padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                  margin: EdgeInsets.only(
+                      bottom: isLastMsgRight(index) ? 20 : 10, left: 10),
+                  child: Text(
+                    DateFormat("dd MMMM, yyyy- hh:mm:aa").format(
+                        DateTime.fromMillisecondsSinceEpoch(
+                            int.parse(doc["timestamp"]))),
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic),
+                  ))
             ],
           ),
         ],
@@ -348,7 +393,7 @@ class ChatScreenState extends State<ChatScreen> {
                 // messages
                 isLastMsgLeft(index)
                     ? Material(
-                      // display reciver profileImage
+                        // display reciver profileImage
                         child: CachedNetworkImage(
                           placeholder: (context, url) => Container(
                             width: 35,
@@ -370,88 +415,90 @@ class ChatScreenState extends State<ChatScreen> {
                     : Container(
                         width: 35,
                       ),
-                      // Dislay the user message
-                       doc["type"] == 0
-              ? Padding(
-                padding:  EdgeInsets.all(10.0),
-                child: Container(
-                    padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-                    margin: EdgeInsets.only(
-                      // changed bottum to tops
-                       top: isLastMsgRight(index) ? 20 : 10, right: 10),
-                    width: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[400],
-                      borderRadius:  BorderRadius.only(
-                    topRight: Radius.circular(15),
-                    bottomRight: Radius.circular(15),
-                    bottomLeft: Radius.circular(15)),
-               
-                    ),
-                    child: Text(
-                      doc['contextMsg'],
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                  ),
-              )
-                : doc["type"] == 1
-                  ? Container(
-                      margin: EdgeInsets.only(
-                        left: 10),
-                      child: FlatButton(
-                        onPressed: () => Navigator.push(context,  MaterialPageRoute(
-                          builder: (context) =>
-                              FullPhoto(url: doc['contextMsg']),
-                        ),),
-                        child: Material(
-                            child: CachedNetworkImage(
-                              placeholder: (context, url) => Container(
-                                width: 200,
-                                height: 200,
-                                padding: EdgeInsets.all(70),
-                                decoration: BoxDecoration(
-                                    color: Colors.grey,
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation(
-                                      Theme.of(context).primaryColor),
+                // Dislay the user message
+                doc["type"] == 0
+                    ? Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Container(
+                          padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+                          margin: EdgeInsets.only(
+                              // changed bottum to tops
+                              top: isLastMsgRight(index) ? 20 : 10,
+                              right: 10),
+                          width: 200,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[400],
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
+                                bottomLeft: Radius.circular(15)),
+                          ),
+                          child: Text(
+                            doc['contextMsg'],
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      )
+                    : doc["type"] == 1
+                        ? Container(
+                            margin: EdgeInsets.only(left: 10),
+                            child: FlatButton(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      FullPhoto(url: doc['contextMsg']),
                                 ),
                               ),
-                              imageUrl: doc['contextMsg'],
-                              height: 200,
-                              width: 200,
-                              fit: BoxFit.cover,
-
-                              // if somehow image can't be retrive or showed then show not available image
-                              errorWidget: (context, url, error) => Material(
-                                  child: Image.asset(
-                                    'images/img_not_available.jpeg',
+                              child: Material(
+                                  child: CachedNetworkImage(
+                                    placeholder: (context, url) => Container(
+                                      width: 200,
+                                      height: 200,
+                                      padding: EdgeInsets.all(70),
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey,
+                                          borderRadius:
+                                              BorderRadius.circular(8)),
+                                      child: CircularProgressIndicator(
+                                        valueColor: AlwaysStoppedAnimation(
+                                            Theme.of(context).primaryColor),
+                                      ),
+                                    ),
+                                    imageUrl: doc['contextMsg'],
                                     height: 200,
                                     width: 200,
                                     fit: BoxFit.cover,
+
+                                    // if somehow image can't be retrive or showed then show not available image
+                                    errorWidget: (context, url, error) =>
+                                        Material(
+                                            child: Image.asset(
+                                              'images/img_not_available.jpeg',
+                                              height: 200,
+                                              width: 200,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            clipBehavior: Clip.hardEdge),
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                   clipBehavior: Clip.hardEdge),
                             ),
-                            borderRadius: BorderRadius.circular(8),
-                            clipBehavior: Clip.hardEdge),
-                      ),
-                    )
-                     : Container(
-                       margin: EdgeInsets.all(10),
-                      child: Image.asset(
-                        "images/stickers/${doc['contextMsg']}.gif",
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-
-
-                      
+                          )
+                        : Container(
+                            margin: EdgeInsets.all(10),
+                            child: Image.asset(
+                              "images/stickers/${doc['contextMsg']}.gif",
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
               ],
             ),
             // /message timestamp
@@ -501,17 +548,19 @@ class ChatScreenState extends State<ChatScreen> {
     return Container(
       height: 200,
       padding: EdgeInsets.only(top: 20, bottom: 10),
-      decoration: Theme.of(context).brightness==Brightness.light ? BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            top: BorderSide(color: Colors.grey, width: 0.5),
-          ),
-          ): BoxDecoration(
-          color: Colors.blueGrey,
-          border: Border(
-            top: BorderSide(color: Colors.grey, width: 0.5),
-          ),
-          ),
+      decoration: Theme.of(context).brightness == Brightness.light
+          ? BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(color: Colors.grey, width: 0.5),
+              ),
+            )
+          : BoxDecoration(
+              color: Color(0xff50e7ed).withOpacity(.6),
+              border: Border(
+                top: BorderSide(color: Colors.grey, width: 0.5),
+              ),
+            ),
       child: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -521,44 +570,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi1.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("mimi1", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi1.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi1", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi2.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("mimi2", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi2.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi2", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi3.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                       onSendMessage("mimi3", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi3.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi3", 2);
+                      });
+                    }),
               ],
             ),
             SizedBox(
@@ -570,44 +616,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi4.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("mimi4", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi4.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi4", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi5.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("mimi5", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi5.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi5", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi6.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("mimi6", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi6.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi6", 2);
+                      });
+                    }),
               ],
             ),
             SizedBox(
@@ -619,44 +662,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi7.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                       onSendMessage("mimi7", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi7.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi7", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi8.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:(){
-                    setState(() {
-                       onSendMessage("mimi8", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi8.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi8", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi9.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("mimi9", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi9.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi9", 2);
+                      });
+                    }),
               ],
             ),
             SizedBox(
@@ -668,44 +708,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute4.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("cute4", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute4.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute4", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute5.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute5", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute5.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute5", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute6.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute6", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute6.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute6", 2);
+                      });
+                    }),
               ],
             ),
             SizedBox(
@@ -717,44 +754,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute1.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("cute1", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute1.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute1", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute2.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("cute2", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute2.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute2", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute3.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("cute3", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute3.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute3", 2);
+                      });
+                    }),
               ],
             ),
             SizedBox(
@@ -766,44 +800,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute7.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("cute7", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute7.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute7", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute8.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute8", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute8.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute8", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute9.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute9", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute9.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute9", 2);
+                      });
+                    }),
               ],
             ),
             SizedBox(
@@ -814,44 +845,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute10.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute10", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute10.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute10", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute11.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("cute11", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute11.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute11", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute12.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute12", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute12.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute12", 2);
+                      });
+                    }),
               ],
             ),
             SizedBox(
@@ -863,44 +891,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute13.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute13", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute13.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute13", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute14.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute14", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute14.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute14", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute15.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed: (){
-                    setState(() {
-                      onSendMessage("cute15", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute15.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute15", 2);
+                      });
+                    }),
               ],
             ),
             SizedBox(
@@ -912,44 +937,41 @@ class ChatScreenState extends State<ChatScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute16.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute16", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute16.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute16", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/cute17.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("cute17", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/cute17.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("cute17", 2);
+                      });
+                    }),
                 FlatButton(
-                  child: Image.asset(
-                    "images/stickers/mimi10.gif",
-                    width: 50,
-                    height: 50,
-                    fit: BoxFit.cover,
-                  ),
-                  onPressed:  (){
-                    setState(() {
-                      onSendMessage("mimi10", 2);
-                    });
-                  }
-                ),
+                    child: Image.asset(
+                      "images/stickers/mimi10.gif",
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        onSendMessage("mimi10", 2);
+                      });
+                    }),
               ],
             ),
           ],
