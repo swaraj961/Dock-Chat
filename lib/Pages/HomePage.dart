@@ -201,7 +201,7 @@ class UserResult extends StatelessWidget {
         child: Column(
           children: <Widget>[
             GestureDetector(
-              onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => Chat(receiverId:eachuser.id , receiverImage:eachuser.photoUrl,receiverName:eachuser.nickname))),
+              onTap: ()=> Navigator.push(context, MaterialPageRoute(builder: (context) => Chat(receiverId:eachuser.id , receiverImage:eachuser.photoUrl,receiverName:eachuser.nickname, joinedAt: eachuser.createdAt, userBio: eachuser.aboutMe,))),
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor: Colors.black,

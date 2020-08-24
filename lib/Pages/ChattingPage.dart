@@ -15,8 +15,10 @@ class Chat extends StatelessWidget {
   final String receiverId;
   final String receiverName;
   final String receiverImage;
+  final String joinedAt;
+  final String userBio;
 
-  Chat({Key key, this.receiverId, this.receiverName, this.receiverImage})
+  Chat({Key key, this.receiverId, this.receiverName, this.receiverImage, this.joinedAt, this.userBio})
       : super(key: key);
 
       void lastmessage(DocumentSnapshot doc){
@@ -45,6 +47,7 @@ class Chat extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(top: 25, bottom: 20),
                       child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                      CircleAvatar(
                        radius: 50,
@@ -52,9 +55,15 @@ class Chat extends StatelessWidget {
                 backgroundImage: CachedNetworkImageProvider(receiverImage),
               ),
                           SizedBox(height: 20,),
-                          Text('Chatting with : '+receiverName,style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey :Colors.white, fontWeight: FontWeight.w600),),
+                            Text('Chatting with',style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey :Colors.white, fontWeight: FontWeight.w600, fontSize: 45),),
+                          Text(receiverName,style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey :Colors.white, fontWeight: FontWeight.w600, fontSize: 45),),
                             SizedBox(height: 20,),
-                          
+                            Text('Member Since: '+DateFormat("dd MMMM , yyyy - hh:mm:aa").format(
+                          DateTime.fromMillisecondsSinceEpoch(
+                              int.parse(joinedAt))),style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey :Colors.white, fontWeight: FontWeight.w600), ),
+                          SizedBox(height: 20,),
+
+                          Text('Status : '+userBio,style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey :Colors.white, fontWeight: FontWeight.w600),),
                           
                         ],
                       ),
