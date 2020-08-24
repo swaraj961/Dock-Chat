@@ -55,8 +55,8 @@ class Chat extends StatelessWidget {
                 backgroundImage: CachedNetworkImageProvider(receiverImage),
               ),
                           SizedBox(height: 20,),
-                            Text('Chatting with',style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey :Colors.white, fontWeight: FontWeight.w600, fontSize: 45),),
-                          Text(receiverName,style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey :Colors.white, fontWeight: FontWeight.w600, fontSize: 45),),
+                            Text('Chatting with',style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey.shade800 :Colors.white, fontWeight: FontWeight.w600, fontSize: 45),),
+                          Text(receiverName,style: TextStyle(color: Theme.of(context).brightness==Brightness.light? Colors.grey.shade800 :Colors.white, fontWeight: FontWeight.w600, fontSize: 45),),
                             SizedBox(height: 20,),
                             Text('Member Since: '+DateFormat("dd MMMM , yyyy - hh:mm:aa").format(
                           DateTime.fromMillisecondsSinceEpoch(
