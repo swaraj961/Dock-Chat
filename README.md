@@ -14,7 +14,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 </div>
-<img alt='DockChat_Mockup' src=''/>
+<img alt='DockChat_Mockup' src='https://github.com/swaraj961/Dock-Chat/blob/master/showcase/DockChatIntro.jpg'>
 
 ## Features
 
@@ -49,7 +49,7 @@
 
   
 ##### Download APK
-<pre><a href="">https://github.com/swaraj961/Dock-Chat/Demoapk/</a></pre>
+<pre><a href="">https://github.com/swaraj961/Dock-Chat/blob/master/showcase/Demoapk/</a></pre>
 
   
   
