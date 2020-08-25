@@ -14,7 +14,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 </div>
-<img alt='DockChat_Mockup' src='demo/mockup1.png'/>
+<img alt='DockChat_Mockup' src=''/>
 
 ## Features
 
@@ -34,13 +34,13 @@
 
 **Screens**
 
-| ![](demo/41.jpg) | ![](demo/42.jpg) | ![](demo/43.jpg) |
+| ![](showcase/sample.jpg) | ![](showcase/sample.jpg) | ![](showcase/sample.jpg) |
 | :-------------:  | :-------------:  | :-------------:  |
 |    Onboarding     |   login Screen     |   HomeScreen     |
 
 
 
-| ![](demo/41.jpg) | ![](demo/42.jpg) | ![](demo/43.jpg) |
+| ![](showcase/sample.jpg) | ![](showcase/sample.jpg) | ![](showcase/sample.jpg) |
 | :-------------:  | :-------------:  | :-------------:  |
 |    UserSearch     |   ChattingScreen    |   Userinfo     |
 
