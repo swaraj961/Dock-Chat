@@ -110,7 +110,7 @@ git clone https://github.com/<your-github-username>/Dock-Chat
 **3.** Navigate to the project directory.
 
 ```terminal
-cd Chatter-App
+cd dockchat
 ```
 
 **4.** Checkout from master to development branch.
@@ -135,7 +135,7 @@ git push -u origin development
 
 **8.** Create a Pull Request!
 
-**Congratulations!**  :boom: Sit and relax, you've made your contribution to [Chatter App]  (https://github.com/swaraj961/Dock-Chat) project.
+**Congratulations!**  :boom: Sit and relax, you've made your contribution to [Dock-ChatApp]  (https://github.com/swaraj961/Dock-Chat) project.
 
 
 ##### Made with ♥ by <a href="https://github.com/swaraj961">Swaraj Routray</a>

@@ -43,6 +43,8 @@ class _SettingScreenState extends State<SettingScreen> {
     await FirebaseAuth.instance.signOut();
     await _googleSignIn.disconnect();
     await _googleSignIn.signOut();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.remove('id');
 
     setState(() {
       isLoading = false;

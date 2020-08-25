@@ -1,11 +1,25 @@
+import 'package:dockchat/Pages/HomePage.dart';
 import 'package:dockchat/Pages/boading_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MyApp());
+
+
+Future<void> main() async {
+      WidgetsFlutterBinding.ensureInitialized();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      var id = prefs.getString('id');
+      print(id);
+      runApp(MyApp(userid: id,));
+    }
+
+// void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+ final String userid;
+
+  const MyApp({Key key, @required this.userid}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return DynamicTheme(
@@ -24,7 +38,7 @@ class MyApp extends StatelessWidget {
 MaterialApp(
       title: 'DockChat',
       theme : themdata,
-      home: BoardingScreen(),
+      home: userid == null ? BoardingScreen() : HomeScreen(currentUserID: userid),
       debugShowCheckedModeBanner: false,
     ),);
   }
