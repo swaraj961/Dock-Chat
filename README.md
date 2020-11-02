@@ -34,13 +34,13 @@
 
 **Screens**
 
-| ![](showcase/sample.jpg) | ![](showcase/sample.jpg) | ![](showcase/sample.jpg) |
+| ![](showcase/sample.jpg) | ![](showcase/login%20auth.jpg) | ![](showcase/home.jpg) |
 | :-------------:  | :-------------:  | :-------------:  |
 |    Onboarding     |   login Screen     |   HomeScreen     |
 
 
 
-| ![](showcase/sample.jpg) | ![](showcase/sample.jpg) | ![](showcase/sample.jpg) |
+| ![](showcase/search.jpg) | ![](showcase/chatting.jpg) | ![](showcase/userinfo.jpg) |
 | :-------------:  | :-------------:  | :-------------:  |
 |    UserSearch     |   ChattingScreen    |   Userinfo     |
 
